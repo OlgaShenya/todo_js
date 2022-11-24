@@ -1,0 +1,22 @@
+{
+  "name": "shishenya_todo_js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://Olga_Shishenya@bitbucket.org/olga_shishenya/shishenya_todo_js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://bitbucket.org/olga_shishenya/shishenya_todo_js/issues"
+  },
+  "homepage": "https://bitbucket.org/olga_shishenya/shishenya_todo_js#readme",
+  "devDependencies": {
+    "eslint": "^8.28.0"
+  }
+}
