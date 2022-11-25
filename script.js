@@ -21,7 +21,11 @@ const render = () => {
     let li = '';
     tasks.forEach((item) => {
         const checked = item.isChecked ? 'checked' : "";
-        li += `<li id=${item.id}><input type="checkbox" ${checked}>${item.text}<button>X</button></li>`;         
+        li += `<li id=${item.id}>
+        <input type="checkbox" ${checked}>
+        <span>${item.text}</span>
+        <input type="text" id="inputEdit" class="hidden" value="${item.text}">
+        <button>X</button></li>`;         
     })
     list.innerHTML = li;
 }
@@ -30,38 +34,43 @@ const checkKey = (event) => {
     if (event.keyCode == 13) addTask();
 }
 
-const checkAllTasks = (e) => {
-    console.log(e)
+const checkAllTasks = (event) => {
+    console.log(event)
     tasks.forEach((item)=> {
-        item.isChecked = e.target.checked;
+        item.isChecked = event.target.checked;
         console.log(item.isChecked);
     })
     render();    
 }
 
-const operateTask = (e) => {
- if (e.target.type == 'checkbox') {
-    checkTask(e);
- } else if (e.target.type == 'submit') {
-    deleteTask (e);
+const operateTask = (event) => {
+ if (event.target.type == 'checkbox') {
+    checkTask(event);
+ } else if (event.target.type == 'submit') {
+    deleteTask (event);
  } else {
-
+    console.log(event);
+    if(event.target.localName == 'span' && event.detail == '2'){
+        event.target.classList.toggle('hidden'); 
+        event.target.nextElementSibling.classList.toggle('hidden');
+        // event.target.nextElementSibling.addEventListener('keydown', keyActions);
+        // event.target.nextElementSibling.addEventListener('blur', blurAction);
+    }
  }
 }
 
-const checkTask = (e) => {
-    let task = tasks.find((item) => item.id === Number(e.target.parentNode.id));
+const checkTask = (event) => {
+    let task = tasks.find((item) => item.id === Number(event.target.parentNode.id));
     task.isChecked = !task.isChecked; 
     render ();
 }
 
-const deleteTask = (e) => {
-    console.log(e.target.parentNode.id);
-    tasks = tasks.filter((item) => item.id !== Number(e.target.parentNode.id));
+const deleteTask = (event) => {
+    tasks = tasks.filter((item) => item.id !== Number(event.target.parentNode.id));
     render();
 }
 
-const deleteAllDone = (e) => {
+const deleteAllDone = () => {
     tasks = tasks.filter((item) => item.isChecked === false);
     render ();
 }
