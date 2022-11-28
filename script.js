@@ -3,6 +3,8 @@ const buttonAdd = document.getElementById('buttonAdd');
 const list = document.querySelector('ul');
 const checkAllBtn = document.getElementById('checkAll');
 const deleteAllCompleted = document.getElementById('deleteAllCompleted');
+const enterButton = 'Enter';
+const escapeButton = 'Escape';
 
 let tasks = [];
 
@@ -12,8 +14,10 @@ const addTask = () => {
         text: inputAdd.value,
         isChecked: false,
     }
-    tasks.push(task);    
-    inputAdd.value = '';
+    if(inputAdd.value !== ''){
+        tasks.push(task);    
+        inputAdd.value = '';
+    }
     render();
 };
 
@@ -31,32 +35,46 @@ const render = () => {
 }
 
 const checkKey = (event) => {
-    if (event.keyCode == 13) addTask();
+    if (event.key === enterButton) addTask();
 }
 
 const checkAllTasks = (event) => {
-    console.log(event)
     tasks.forEach((item)=> {
         item.isChecked = event.target.checked;
-        console.log(item.isChecked);
     })
     render();    
 }
 
 const operateTask = (event) => {
- if (event.target.type == 'checkbox') {
+ if (event.target.type == 'checkbox') 
     checkTask(event);
- } else if (event.target.type == 'submit') {
+ if (event.target.type == 'submit') 
     deleteTask (event);
- } else {
-    console.log(event);
-    if(event.target.localName == 'span' && event.detail == '2'){
-        event.target.classList.toggle('hidden'); 
-        event.target.nextElementSibling.classList.toggle('hidden');
-        // event.target.nextElementSibling.addEventListener('keydown', keyActions);
-        // event.target.nextElementSibling.addEventListener('blur', blurAction);
+if (event.target.localName == 'span' && event.detail == '2') {
+    event.target.classList.toggle('hidden');
+    event.target.nextElementSibling.classList.toggle('hidden');
+    event.target.nextElementSibling.focus();
     }
  }
+
+const handleKeys = (event) => {
+    if (event.key === enterButton) {
+        renameTask(event);
+    } else if (event.key === escapeButton) {
+        event.target.previousElementSibling.classList.toggle('hidden');
+        event.target.classList.toggle('hidden');
+        event.target.value = event.target.previousElementSibling.textContent;
+    }
+}
+
+const renameTask = (event) => {
+    event.target.previousElementSibling.textContent = event.target.value;
+    event.target.previousElementSibling.classList.toggle('hidden');
+    event.target.classList.toggle('hidden');
+    let task = tasks.find((item) => item.id === Number(event.target.parentElement.id));
+    if(event.target.value !== ''){
+    task.text = event.target.value;}
+    render();
 }
 
 const checkTask = (event) => {
@@ -79,4 +97,6 @@ buttonAdd.addEventListener('click', addTask);
 inputAdd.addEventListener('keydown', checkKey);
 checkAllBtn.addEventListener('click', checkAllTasks);
 list.addEventListener('click', operateTask);
+list.addEventListener('keydown', handleKeys);
+list.addEventListener('blur', renameTask, true);
 deleteAllCompleted.addEventListener('click', deleteAllDone);
