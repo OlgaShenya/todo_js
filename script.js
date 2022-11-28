@@ -5,6 +5,9 @@ const checkAllBtn = document.getElementById('checkAll');
 const deleteAllCompleted = document.getElementById('deleteAllCompleted');
 const enterButton = 'Enter';
 const escapeButton = 'Escape';
+const allTodos = document.getElementById('allTodos');
+const activeTodos = document.getElementById('activeTodos');
+const completedTodos = document.getElementById('completedTodos');
 
 let tasks = [];
 
@@ -32,6 +35,20 @@ const render = () => {
         <button>X</button></li>`;         
     })
     list.innerHTML = li;
+
+    allTodos.firstElementChild.textContent = tasks.length;
+    activeTodos.firstElementChild.textContent = countActiveTodos();
+    completedTodos.firstElementChild.textContent = countCompletedTodos();
+}
+
+const countActiveTodos = () => {
+    let activeTasks = tasks.filter((item) => item.isChecked === false);
+    return activeTasks.length;
+}
+
+const countCompletedTodos = () => {
+    let activeTasks = tasks.filter((item) => item.isChecked === true);
+    return activeTasks.length;
 }
 
 const checkKey = (event) => {
@@ -45,42 +62,36 @@ const checkAllTasks = (event) => {
     render();    
 }
 
-const operateTask = (event) => {
- if (event.target.type == 'checkbox') 
-    checkTask(event);
- if (event.target.type == 'submit') 
-    deleteTask (event);
-if (event.target.localName == 'span' && event.detail == '2') {
-    event.target.classList.toggle('hidden');
-    event.target.nextElementSibling.classList.toggle('hidden');
-    event.target.nextElementSibling.focus();
+const checkTask = (event) => {
+    let task = tasks.find((item) => item.id === Number(event.target.parentNode.id));
+    task.isChecked = !task.isChecked; 
+    render ();
+}
+
+const renameTask = (event) => {
+    if(event.sourceCapabilities !== null){
+        // console.log('renameTask', event)
+        event.target.previousElementSibling.textContent = event.target.value;
+        event.target.previousElementSibling.classList.toggle('hidden');
+        event.target.classList.toggle('hidden');
+        let task = tasks.find((item) => item.id === Number(event.target.parentElement.id));
+        if(event.target.value !== ''){
+        task.text = event.target.value;}
+        render();
     }
- }
+
+}
 
 const handleKeys = (event) => {
     if (event.key === enterButton) {
+        // console.log('handleKeys', event)
         renameTask(event);
     } else if (event.key === escapeButton) {
         event.target.previousElementSibling.classList.toggle('hidden');
         event.target.classList.toggle('hidden');
         event.target.value = event.target.previousElementSibling.textContent;
     }
-}
 
-const renameTask = (event) => {
-    event.target.previousElementSibling.textContent = event.target.value;
-    event.target.previousElementSibling.classList.toggle('hidden');
-    event.target.classList.toggle('hidden');
-    let task = tasks.find((item) => item.id === Number(event.target.parentElement.id));
-    if(event.target.value !== ''){
-    task.text = event.target.value;}
-    render();
-}
-
-const checkTask = (event) => {
-    let task = tasks.find((item) => item.id === Number(event.target.parentNode.id));
-    task.isChecked = !task.isChecked; 
-    render ();
 }
 
 const deleteTask = (event) => {
@@ -92,6 +103,18 @@ const deleteAllDone = () => {
     tasks = tasks.filter((item) => item.isChecked === false);
     render ();
 }
+
+const operateTask = (event) => {
+    if (event.target.type == 'checkbox') 
+       checkTask(event);
+    if (event.target.type == 'submit') 
+       deleteTask (event);
+   if (event.target.localName == 'span' && event.detail == '2') {
+       event.target.classList.toggle('hidden');
+       event.target.nextElementSibling.classList.toggle('hidden');
+       event.target.nextElementSibling.focus();
+       }
+    }
 
 buttonAdd.addEventListener('click', addTask);
 inputAdd.addEventListener('keydown', checkKey);
