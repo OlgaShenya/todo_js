@@ -36,19 +36,16 @@ const render = () => {
     })
     list.innerHTML = li;
 
+    countTodoTypes();
+}
+
+const countTodoTypes = () => {
     allTodos.firstElementChild.textContent = tasks.length;
-    activeTodos.firstElementChild.textContent = countActiveTodos();
-    completedTodos.firstElementChild.textContent = countCompletedTodos();
-}
 
-const countActiveTodos = () => {
     let activeTasks = tasks.filter((item) => item.isChecked === false);
-    return activeTasks.length;
-}
+    activeTodos.firstElementChild.textContent = activeTasks.length;
 
-const countCompletedTodos = () => {
-    let activeTasks = tasks.filter((item) => item.isChecked === true);
-    return activeTasks.length;
+    completedTodos.firstElementChild.textContent = tasks.length - activeTasks.length;
 }
 
 const checkKey = (event) => {
