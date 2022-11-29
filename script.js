@@ -9,9 +9,12 @@ const allTodos = document.getElementById('allTodos');
 const activeTodos = document.getElementById('activeTodos');
 const completedTodos = document.getElementById('completedTodos');
 const filterTodosList = document.getElementById('filterTodos');
+const pageList = document.getElementById('pageList');
+const pageSize = 3;
 
 let tasks = [];
 let filterStatus = 'allTodos';
+let currentPage = 1;
 
 const addTask = () => {
     let task = {
@@ -26,31 +29,57 @@ const addTask = () => {
     render();
 };
 
+
 const setFilter = () => {
+    let filteredTasks = [];
     switch(filterStatus){ 
         case 'activeTodos':
-          return filterStatus = tasks. filter((item) => !item.isChecked);       
+          return filteredTasks = tasks. filter((item) => !item.isChecked);       
         case 'completedTodos':
-            return filterStatus = tasks. filter((item) => item.isChecked);
+            return filteredTasks = tasks. filter((item) => item.isChecked);
         default:
-            return filterStatus = tasks;
+            return tasks;
     } 
      
 };
 
+const countPages = (data) => {
+    let pageCount = Math.ceil(data.length/pageSize);
+    let liPage = ''
+    for (let i=1; i<= pageCount; i++){
+        liPage += `<button id=${i}>${i}</button>`;
+    }
+    pageList.innerHTML = liPage;
+}
+
+const setPage = (event) => {
+    currentPage = event.target.id;
+    render();
+}
+
+const showPageTasks = (data) => {
+    let start = (currentPage - 1) * pageSize;
+    let end = start + pageSize;
+    return data.slice(start, end);
+}
+
 const render = () => {
     let li = '';
     const filteredTasks = setFilter();
-    filteredTasks.forEach((item) => {
+    // console.log('filteredtasks:', filteredTasks)    
+    countPages(filteredTasks);
+    const currentTasks = showPageTasks(filteredTasks);
+    console.log('tt', filterStatus) 
+    console.log('currentasks:', currentTasks) 
+    currentTasks.forEach((item) => {
         const checked = item.isChecked ? 'checked' : "";
         li += `<li id=${item.id}>
         <input type="checkbox" ${checked}>
         <span>${item.text}</span>
         <input type="text" id="inputEdit" class="hidden" value="${item.text}">
-        <button>X</button></li>`;         
+        <button>X</button></li>`;        
     })
     list.innerHTML = li;
-
     countTodoTypes();
 }
 
@@ -128,6 +157,7 @@ const operateTask = (event) => {
 
 const changeFilterStatus = (event) => {
     filterStatus = event.target.id;
+    currentPage = 1;
     render();
 
 }
@@ -140,3 +170,4 @@ list.addEventListener('keydown', handleKeys);
 list.addEventListener('blur', renameTask, true);
 deleteAllCompleted.addEventListener('click', deleteAllDone);
 filterTodosList.addEventListener('click', changeFilterStatus);
+pageList.addEventListener('click', setPage);
