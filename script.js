@@ -8,8 +8,10 @@ const escapeButton = 'Escape';
 const allTodos = document.getElementById('allTodos');
 const activeTodos = document.getElementById('activeTodos');
 const completedTodos = document.getElementById('completedTodos');
+const filterTodosList = document.getElementById('filterTodos');
 
 let tasks = [];
+let filterStatus = 'allTodos';
 
 const addTask = () => {
     let task = {
@@ -24,9 +26,22 @@ const addTask = () => {
     render();
 };
 
+const setFilter = () => {
+    switch(filterStatus){ 
+        case 'activeTodos':
+          return filterStatus = tasks. filter((item) => !item.isChecked);       
+        case 'completedTodos':
+            return filterStatus = tasks. filter((item) => item.isChecked);
+        default:
+            return filterStatus = tasks;
+    } 
+     
+};
+
 const render = () => {
     let li = '';
-    tasks.forEach((item) => {
+    const filteredTasks = setFilter();
+    filteredTasks.forEach((item) => {
         const checked = item.isChecked ? 'checked' : "";
         li += `<li id=${item.id}>
         <input type="checkbox" ${checked}>
@@ -40,12 +55,12 @@ const render = () => {
 }
 
 const countTodoTypes = () => {
-    allTodos.firstElementChild.textContent = tasks.length;
+    allTodos.textContent = `All ${tasks.length}`;
 
     let activeTasks = tasks.filter((item) => item.isChecked === false);
-    activeTodos.firstElementChild.textContent = activeTasks.length;
+    activeTodos.textContent = `Active ${activeTasks.length}`;
 
-    completedTodos.firstElementChild.textContent = tasks.length - activeTasks.length;
+    completedTodos.textContent = `Completed ${tasks.length - activeTasks.length}`;
 }
 
 const checkKey = (event) => {
@@ -66,8 +81,7 @@ const checkTask = (event) => {
 }
 
 const renameTask = (event) => {
-    if(event.sourceCapabilities !== null){
-        // console.log('renameTask', event)
+    if(event.sourceCapabilities !== null){        
         event.target.previousElementSibling.textContent = event.target.value;
         event.target.previousElementSibling.classList.toggle('hidden');
         event.target.classList.toggle('hidden');
@@ -81,7 +95,6 @@ const renameTask = (event) => {
 
 const handleKeys = (event) => {
     if (event.key === enterButton) {
-        // console.log('handleKeys', event)
         renameTask(event);
     } else if (event.key === escapeButton) {
         event.target.previousElementSibling.classList.toggle('hidden');
@@ -111,7 +124,13 @@ const operateTask = (event) => {
        event.target.nextElementSibling.classList.toggle('hidden');
        event.target.nextElementSibling.focus();
        }
-    }
+}
+
+const changeFilterStatus = (event) => {
+    filterStatus = event.target.id;
+    render();
+
+}
 
 buttonAdd.addEventListener('click', addTask);
 inputAdd.addEventListener('keydown', checkKey);
@@ -120,3 +139,4 @@ list.addEventListener('click', operateTask);
 list.addEventListener('keydown', handleKeys);
 list.addEventListener('blur', renameTask, true);
 deleteAllCompleted.addEventListener('click', deleteAllDone);
+filterTodosList.addEventListener('click', changeFilterStatus);
