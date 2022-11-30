@@ -16,13 +16,33 @@ let tasks = [];
 let filterStatus = 'allTodos';
 let currentPage = 1;
 
+const validateTask = (text) => {
+    text
+    .replaceAll('?', 'U+003F')
+    .replaceAll('№', 'U+2116')
+    .replaceAll(':', 'U+003A')
+    .replaceAll('%', 'U+0025')
+    .replaceAll(';', 'U+003B')
+    .replaceAll('*', 'U+002A')
+    .replaceAll('.', 'U+002E')
+    .replaceAll('"', 'U+0022')
+    .replaceAll('\'', 'U+0027')
+    .replace(/ +/g, ' ');
+
+    return text;
+    
+    
+}
+
 const addTask = () => {
+    const text = _.escape(validateTask(inputAdd.value.trim()));
+    if (text){
     let task = {
         id: Date.now(),
-        text: inputAdd.value,
+        text: text,
         isChecked: false,
-    }
-    if(inputAdd.value !== ''){
+    }  
+        console.log(inputAdd.value);
         tasks.push(task);    
         inputAdd.value = '';
     }
@@ -64,13 +84,11 @@ const showPageTasks = (data) => {
 }
 
 const render = () => {
+    console.log(_.isArray([1,2]));
     let li = '';
-    const filteredTasks = setFilter();
-    // console.log('filteredtasks:', filteredTasks)    
+    const filteredTasks = setFilter(); 
     countPages(filteredTasks);
     const currentTasks = showPageTasks(filteredTasks);
-    console.log('tt', filterStatus) 
-    console.log('currentasks:', currentTasks) 
     currentTasks.forEach((item) => {
         const checked = item.isChecked ? 'checked' : "";
         li += `<li id=${item.id}>
@@ -116,7 +134,7 @@ const renameTask = (event) => {
         event.target.classList.toggle('hidden');
         let task = tasks.find((item) => item.id === Number(event.target.parentElement.id));
         if(event.target.value !== ''){
-        task.text = event.target.value;}
+        task.text = validateTask(_.escape(event.target.value));}
         render();
     }
 
