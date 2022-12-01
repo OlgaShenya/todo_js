@@ -67,7 +67,7 @@ const countPages = (data) => {
     let pageCount = Math.ceil(data.length/pageSize);
     let liPage = ''
     for (let i=1; i<= pageCount; i++){
-        liPage += `<button id=${i}>${i}</button>`;
+        liPage += `<button type="button" class="btn btn-warning" id=${i}>${i}</button>`;
     }
     pageList.innerHTML = liPage;
 }
@@ -84,7 +84,6 @@ const showPageTasks = (data) => {
 }
 
 const render = () => {
-    console.log(_.isArray([1,2]));
     let li = '';
     const filteredTasks = setFilter(); 
     countPages(filteredTasks);
@@ -95,7 +94,7 @@ const render = () => {
         <input type="checkbox" ${checked}>
         <span>${item.text}</span>
         <input type="text" id="inputEdit" class="hidden" value="${item.text}">
-        <button>X</button></li>`;        
+        <button id="myBtnStyle" type="button" class="btn btn-success">X</button></li>`;        
     })
     list.innerHTML = li;
     countTodoTypes();
