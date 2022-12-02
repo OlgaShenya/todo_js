@@ -49,6 +49,7 @@
   };
 
   const SHOW_PAGE_TASKS = (data) => {
+    currentPage = (currentPage < 1) ? Math.ceil(data.length / PAGE_SIZE) : currentPage;
     const START = (currentPage - 1) * PAGE_SIZE;
     const END = START + PAGE_SIZE;
     return data.slice(START, END);
@@ -65,8 +66,8 @@
   const RENDER = () => {
     let li = '';
     const FILTERED_TASKS = SET_FILTER();
-    COUNT_PAGES(FILTERED_TASKS);
     const CURRENT_TASKS = SHOW_PAGE_TASKS(FILTERED_TASKS);
+    COUNT_PAGES(FILTERED_TASKS);
     CURRENT_TASKS.forEach((item) => {
       const CHECKED = item.isChecked ? 'checked' : '';
       li += `<li id=${item.id}>
@@ -105,6 +106,7 @@
       };
       tasks.push(TASK);
       INPUT_ADD.value = '';
+      currentPage = 0;
     }
     RENDER();
   };
@@ -164,6 +166,7 @@
 
   const DELETE_ALL_DONE = () => {
     tasks = tasks.filter((item) => !item.isChecked);
+    CHECK_ALL_BTN.checked = false;
     RENDER();
   };
 
