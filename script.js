@@ -163,8 +163,8 @@ const deleteAllDone = () => {
 
 const operateTask = (event) => {
   if (event.target.type === 'checkbox') { checkTask(event); }
-  if (event.target.type === 'submit') { deleteTask(event); }
-  if (event.target.localName === 'span' && event.detail === '2') {
+  if (event.target.type === 'button') { deleteTask(event); }
+  if (event.target.localName === 'span' && event.detail === 2) {
     event.target.classList.toggle('hidden');
     event.target.nextElementSibling.classList.toggle('hidden');
     event.target.nextElementSibling.focus();
