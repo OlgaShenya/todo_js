@@ -19,16 +19,22 @@
   let currentPage = 1;
 
   const SET_FILTER = () => {
+    ALL_TODOS.classList.remove("btn-light");
+    COMPLETED_TODOS.classList.remove("btn-light");
+    ACTIVE_TODOS.classList.remove("btn-light");
     let filteredTasks = [];
     switch (filterStatus) {
       case 'activeTodos':
         filteredTasks = tasks.filter((item) => !item.isChecked);
+        ACTIVE_TODOS.classList.add("btn-light");
         break;
       case 'completedTodos':
         filteredTasks = tasks.filter((item) => item.isChecked);
+        COMPLETED_TODOS.classList.add("btn-light");
         break;
       default:
         filteredTasks = tasks;
+        ALL_TODOS.classList.add("btn-light");
     }
     return filteredTasks;
   };
@@ -37,7 +43,7 @@
     const PAGE_COUNT = Math.ceil(data.length / PAGE_SIZE);
     let liPage = '';
     for (let i = 1; i <= PAGE_COUNT; i += 1) {
-      liPage += `<button type="button" class="btn btn-warning" id=${i}>${i}</button>`;
+      liPage += `<button type="button" class="btn ${currentPage != i ? "btn-warning" : "btn-light"}" id=${i}>${i}</button>`;
     }
     PAGE_LIST.innerHTML = liPage;
   };
