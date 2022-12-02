@@ -1,23 +1,23 @@
-const inputAdd = document.getElementById('inputAdd');
-const buttonAdd = document.getElementById('buttonAdd');
-const list = document.querySelector('ul');
-const checkAllBtn = document.getElementById('checkAll');
-const deleteAllCompleted = document.getElementById('deleteAllCompleted');
-const enterButton = 'Enter';
-const escapeButton = 'Escape';
-const allTodos = document.getElementById('allTodos');
-const activeTodos = document.getElementById('activeTodos');
-const completedTodos = document.getElementById('completedTodos');
-const filterTodosList = document.getElementById('filterTodos');
-const pageList = document.getElementById('pageList');
-const pageSize = 3;
+const INPUT_ADD = document.getElementById('inputAdd');
+const BUTTON_ADD = document.getElementById('buttonAdd');
+const LIST = document.querySelector('ul');
+const CHECK_ALL_BTN = document.getElementById('checkAll');
+const DELETE_ALL_COMPLETED = document.getElementById('deleteAllCompleted');
+const ENTER_BUTTON = 'Enter';
+const ESCAPE_BUTTON = 'Escape';
+const ALL_TODOS = document.getElementById('allTodos');
+const ACTIVE_TODOS = document.getElementById('activeTodos');
+const COMPLETED_TODOS = document.getElementById('completedTodos');
+const FILTER_TODOS_LIST = document.getElementById('filterTodos');
+const PAGE_LIST = document.getElementById('pageList');
+const PAGE_SIZE = 3;
 const { _ } = window;
 
 let tasks = [];
 let filterStatus = 'allTodos';
 let currentPage = 1;
 
-const setFilter = () => {
+const SET_FILTER = () => {
   let filteredTasks = [];
   switch (filterStatus) {
     case 'activeTodos':
@@ -32,48 +32,47 @@ const setFilter = () => {
   return filteredTasks;
 };
 
-const countPages = (data) => {
-  const pageCount = Math.ceil(data.length / pageSize);
+const COUNT_PAGES = (data) => {
+  const PAGE_COUNT = Math.ceil(data.length / PAGE_SIZE);
   let liPage = '';
-  for (let i = 1; i <= pageCount; i += 1) {
+  for (let i = 1; i <= PAGE_COUNT; i += 1) {
     liPage += `<button type="button" class="btn btn-warning" id=${i}>${i}</button>`;
   }
-  pageList.innerHTML = liPage;
+  PAGE_LIST.innerHTML = liPage;
 };
 
-const showPageTasks = (data) => {
-  const start = (currentPage - 1) * pageSize;
-  const end = start + pageSize;
-  return data.slice(start, end);
+const SHOW_PAGE_TASKS = (data) => {
+  const START = (currentPage - 1) * PAGE_SIZE;
+  const END = START + PAGE_SIZE;
+  return data.slice(START, END);
 };
 
-const countTodoTypes = () => {
-  allTodos.textContent = `All ${tasks.length}`;
+const COUNT_TODO_TYPES = () => {
+  ALL_TODOS.textContent = `All ${tasks.length}`;
+  const ACTIVE_TASKS = tasks.filter((item) => item.isChecked === false);
+  ACTIVE_TODOS.textContent = `Active ${ACTIVE_TASKS.length}`;
 
-  const activeTasks = tasks.filter((item) => item.isChecked === false);
-  activeTodos.textContent = `Active ${activeTasks.length}`;
-
-  completedTodos.textContent = `Completed ${tasks.length - activeTasks.length}`;
+  COMPLETED_TODOS.textContent = `Completed ${tasks.length - ACTIVE_TASKS.length}`;
 };
 
-const render = () => {
+const RENDER = () => {
   let li = '';
-  const filteredTasks = setFilter();
-  countPages(filteredTasks);
-  const currentTasks = showPageTasks(filteredTasks);
-  currentTasks.forEach((item) => {
-    const checked = item.isChecked ? 'checked' : '';
+  const FILTERED_TASKS = SET_FILTER();
+  COUNT_PAGES(FILTERED_TASKS);
+  const CURRENT_TASKS = SHOW_PAGE_TASKS(FILTERED_TASKS);
+  CURRENT_TASKS.forEach((item) => {
+    const CHECKED = item.isChecked ? 'checked' : '';
     li += `<li id=${item.id}>
-          <input type="checkbox" ${checked}>
+          <input type="checkbox" ${CHECKED}>
           <span>${item.text}</span>
           <input type="text" id="inputEdit" class="hidden" value="${item.text}">
           <button id="myBtnStyle" type="button" class="btn btn-success">X</button></li>`;
   });
-  list.innerHTML = li;
-  countTodoTypes();
+  LIST.innerHTML = li;
+  COUNT_TODO_TYPES();
 };
 
-const validateTask = (text) => {
+const VALIDATE_TASK = (text) => {
   text
     .replaceAll('?', 'U+003F')
     .replaceAll('№', 'U+2116')
@@ -89,81 +88,81 @@ const validateTask = (text) => {
   return text;
 };
 
-const addTask = () => {
-  const text = _.escape(validateTask(inputAdd.value.trim()));
-  if (text) {
-    const task = {
+const ADD_TASK = () => {
+  const TEXT = _.escape(VALIDATE_TASK(INPUT_ADD.value.trim()));
+  if (TEXT) {
+    const TASK = {
       id: Date.now(),
-      text,
+      text: TEXT,
       isChecked: false,
     };
-    tasks.push(task);
-    inputAdd.value = '';
+    tasks.push(TASK);
+    INPUT_ADD.value = '';
   }
-  render();
+  RENDER();
 };
 
-const setPage = (event) => {
+const SET_PAGE = (event) => {
   currentPage = event.target.id;
-  render();
+  RENDER();
 };
 
-const checkKey = (event) => {
-  if (event.key === enterButton) addTask();
+const CHECK_KEY = (event) => {
+  if (event.key === ENTER_BUTTON) ADD_TASK();
 };
 
-const checkAllTasks = (event) => {
+const CHECK_ALL_TASKS = (event) => {
   tasks.forEach((item) => {
-    const task = item;
-    task.isChecked = event.target.checked;
+    const TASK = item;
+    TASK.isChecked = event.target.checked;
   });
-  render();
+  RENDER();
 };
 
-const checkTask = (event) => {
-  const task = tasks.find((item) => item.id === Number(event.target.parentNode.id));
-  task.isChecked = !task.isChecked;
-  render();
+const CHECK_TASK = (event) => {
+  const TASK = tasks.find((item) => item.id === Number(event.target.parentNode.id));
+  TASK.isChecked = !TASK.isChecked;
+  RENDER();
 };
 
-const renameTask = (event) => {
-  const currentEvent = event;
-  if (currentEvent.sourceCapabilities !== null) {
-    currentEvent.target.previousElementSibling.textContent = event.target.value;
-    currentEvent.target.previousElementSibling.classList.toggle('hidden');
-    currentEvent.target.classList.toggle('hidden');
-    const task = tasks.find((item) => item.id === Number(event.target.parentElement.id));
-    if (currentEvent.target.value !== '') {
-      task.text = validateTask(_.escape(event.target.value));
+const RENAME_TASK = (event) => {
+  const CURRENT_EVENT = event;
+  if (CURRENT_EVENT.sourceCapabilities !== null) {
+    CURRENT_EVENT.target.previousElementSibling.textContent = event.target.value;
+    CURRENT_EVENT.target.previousElementSibling.classList.toggle('hidden');
+    CURRENT_EVENT.target.classList.toggle('hidden');
+    const TASK = tasks.find((item) => item.id === Number(event.target.parentElement.id));
+    if (CURRENT_EVENT.target.value !== '') {
+      TASK.text = VALIDATE_TASK(_.escape(event.target.value));
     }
-    render();
+    RENDER();
   }
 };
 
-const handleKeys = (event) => {
-  if (event.key === enterButton) {
-    renameTask(event);
-  } else if (event.key === escapeButton) {
-    const currentEvent = event;
-    currentEvent.target.previousElementSibling.classList.toggle('hidden');
-    currentEvent.target.classList.toggle('hidden');
-    currentEvent.target.value = event.target.previousElementSibling.textContent;
+const HANDLE_KEYS = (event) => {
+  if (event.key === ENTER_BUTTON) {
+    RENAME_TASK(event);
+  } else if (event.key === ESCAPE_BUTTON) {
+    const CURRENT_EVENT = event;
+    CURRENT_EVENT.target.previousElementSibling.classList.toggle('hidden');
+    CURRENT_EVENT.target.classList.toggle('hidden');
+    CURRENT_EVENT.target.value = event.target.previousElementSibling.textContent;
   }
 };
 
-const deleteTask = (event) => {
+const DELETE_TASK = (event) => {
   tasks = tasks.filter((item) => item.id !== Number(event.target.parentNode.id));
-  render();
+  RENDER();
 };
 
-const deleteAllDone = () => {
+const DELETE_ALL_DONE = () => {
   tasks = tasks.filter((item) => item.isChecked === false);
-  render();
+  RENDER();
 };
 
-const operateTask = (event) => {
-  if (event.target.type === 'checkbox') { checkTask(event); }
-  if (event.target.type === 'button') { deleteTask(event); }
+const OPERATE_TASK = (event) => {
+  if (event.target.type === 'checkbox') { CHECK_TASK(event); }
+  if (event.target.type === 'button') { DELETE_TASK(event); }
   if (event.target.localName === 'span' && event.detail === 2) {
     event.target.classList.toggle('hidden');
     event.target.nextElementSibling.classList.toggle('hidden');
@@ -171,18 +170,18 @@ const operateTask = (event) => {
   }
 };
 
-const changeFilterStatus = (event) => {
+const CHANGE_FILTER_STATUS = (event) => {
   filterStatus = event.target.id;
   currentPage = 1;
-  render();
+  RENDER();
 };
 
-buttonAdd.addEventListener('click', addTask);
-inputAdd.addEventListener('keydown', checkKey);
-checkAllBtn.addEventListener('click', checkAllTasks);
-list.addEventListener('click', operateTask);
-list.addEventListener('keydown', handleKeys);
-list.addEventListener('blur', renameTask, true);
-deleteAllCompleted.addEventListener('click', deleteAllDone);
-filterTodosList.addEventListener('click', changeFilterStatus);
-pageList.addEventListener('click', setPage);
+BUTTON_ADD.addEventListener('click', ADD_TASK);
+INPUT_ADD.addEventListener('keydown', CHECK_KEY);
+CHECK_ALL_BTN.addEventListener('click', CHECK_ALL_TASKS);
+LIST.addEventListener('click', OPERATE_TASK);
+LIST.addEventListener('keydown', HANDLE_KEYS);
+LIST.addEventListener('blur', RENAME_TASK, true);
+DELETE_ALL_COMPLETED.addEventListener('click', DELETE_ALL_DONE);
+FILTER_TODOS_LIST.addEventListener('click', CHANGE_FILTER_STATUS);
+PAGE_LIST.addEventListener('click', SET_PAGE);
