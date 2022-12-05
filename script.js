@@ -1,16 +1,16 @@
-(function runScript() {
-  const INPUT_ADD = document.getElementById('inputAdd');
-  const BUTTON_ADD = document.getElementById('buttonAdd');
-  const LIST = document.querySelector('ul');
-  const CHECK_ALL_BTN = document.getElementById('checkAll');
-  const DELETE_ALL_COMPLETED = document.getElementById('deleteAllCompleted');
+(() => {
+  const addInput = document.getElementById('inputAdd');
+  const addButton = document.getElementById('buttonAdd');
+  const list = document.querySelector('ul');
+  const checkAllButton = document.getElementById('checkAll');
+  const deleteAllCompleted = document.getElementById('deleteAllCompleted');
   const ENTER_BUTTON = 'Enter';
   const ESCAPE_BUTTON = 'Escape';
-  const ALL_TODOS = document.getElementById('allTodos');
-  const ACTIVE_TODOS = document.getElementById('activeTodos');
-  const COMPLETED_TODOS = document.getElementById('completedTodos');
-  const FILTER_TODOS_LIST = document.getElementById('filterTodos');
-  const PAGE_LIST = document.getElementById('pageList');
+  const allTodos = document.getElementById('allTodos');
+  const activeTodos = document.getElementById('activeTodos');
+  const completedTodos = document.getElementById('completedTodos');
+  const filterTodosList = document.getElementById('filterTodos');
+  const pageList = document.getElementById('pageList');
   const PAGE_SIZE = 3;
   const { _ } = window;
 
@@ -18,69 +18,69 @@
   let filterStatus = 'allTodos';
   let currentPage = 1;
 
-  const SET_FILTER = () => {
-    ALL_TODOS.classList.remove("btn-light");
-    COMPLETED_TODOS.classList.remove("btn-light");
-    ACTIVE_TODOS.classList.remove("btn-light");
+  const setFilter = () => {
+    allTodos.classList.remove('btn-light');
+    completedTodos.classList.remove('btn-light');
+    activeTodos.classList.remove('btn-light');
     let filteredTasks = [];
     switch (filterStatus) {
       case 'activeTodos':
         filteredTasks = tasks.filter((item) => !item.isChecked);
-        ACTIVE_TODOS.classList.add("btn-light");
+        activeTodos.classList.add('btn-light');
         break;
       case 'completedTodos':
         filteredTasks = tasks.filter((item) => item.isChecked);
-        COMPLETED_TODOS.classList.add("btn-light");
+        completedTodos.classList.add('btn-light');
         break;
       default:
         filteredTasks = tasks;
-        ALL_TODOS.classList.add("btn-light");
+        allTodos.classList.add('btn-light');
     }
     return filteredTasks;
   };
 
-  const COUNT_PAGES = (data) => {
-    const PAGE_COUNT = Math.ceil(data.length / PAGE_SIZE);
+  const countPages = (data) => {
+    const pageCount = Math.ceil(data.length / PAGE_SIZE);
     let liPage = '';
-    for (let i = 1; i <= PAGE_COUNT; i += 1) {
-      liPage += `<button type="button" class="btn ${currentPage != i ? "btn-warning" : "btn-light"}" id=${i}>${i}</button>`;
+    for (let i = 1; i <= pageCount; i += 1) {
+      liPage += `<button type="button" class="btn ${currentPage !== i ? 'btn-warning' : 'btn-light'}" id=${i}>${i}</button>`;
     }
-    PAGE_LIST.innerHTML = liPage;
+    pageList.innerHTML = liPage;
   };
 
-  const SHOW_PAGE_TASKS = (data) => {
+  const showPageTasks = (data) => {
     currentPage = (currentPage < 1) ? Math.ceil(data.length / PAGE_SIZE) : currentPage;
-    const START = (currentPage - 1) * PAGE_SIZE;
-    const END = START + PAGE_SIZE;
-    return data.slice(START, END);
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    return data.slice(start, end);
   };
 
-  const COUNT_TODO_TYPES = () => {
-    ALL_TODOS.textContent = `All ${tasks.length}`;
-    const ACTIVE_TASKS = tasks.filter((item) => !item.isChecked);
-    ACTIVE_TODOS.textContent = `Active ${ACTIVE_TASKS.length}`;
+  const countTodoTypes = () => {
+    allTodos.textContent = `All ${tasks.length}`;
+    const activeTasks = tasks.filter((item) => !item.isChecked);
+    activeTodos.textContent = `Active ${activeTasks.length}`;
 
-    COMPLETED_TODOS.textContent = `Completed ${tasks.length - ACTIVE_TASKS.length}`;
+    completedTodos.textContent = `Completed ${tasks.length - activeTasks.length}`;
   };
 
-  const RENDER = () => {
+  const render = () => {
     let li = '';
-    const FILTERED_TASKS = SET_FILTER();
-    const CURRENT_TASKS = SHOW_PAGE_TASKS(FILTERED_TASKS);
-    COUNT_PAGES(FILTERED_TASKS);
-    CURRENT_TASKS.forEach((item) => {
-      const CHECKED = item.isChecked ? 'checked' : '';
+    const filteredTasks = setFilter();
+    const currentTasks = showPageTasks(filteredTasks);
+    countPages(filteredTasks);
+    currentTasks.forEach((item) => {
+      const checked = item.isChecked ? 'checked' : '';
       li += `<li id=${item.id}>
-          <input type="checkbox" ${CHECKED}>
+          <input type="checkbox" ${checked}>
           <span>${item.text}</span>
           <input type="text" id="inputEdit" class="hidden" value="${item.text}">
           <button id="myBtnStyle" type="button" class="btn btn-success">X</button></li>`;
     });
-    LIST.innerHTML = li;
-    COUNT_TODO_TYPES();
+    list.innerHTML = li;
+    countTodoTypes();
   };
 
-  const VALIDATE_TASK = (text) => {
+  const validateTask = (text) => {
     text
       .replaceAll('?', 'U+003F')
       .replaceAll('№', 'U+2116')
@@ -96,103 +96,119 @@
     return text;
   };
 
-  const ADD_TASK = () => {
-    const TEXT = _.escape(VALIDATE_TASK(INPUT_ADD.value.trim()));
+  const addTask = () => {
+    const TEXT = _.escape(validateTask(addInput.value.trim()));
     if (TEXT) {
-      const TASK = {
+      const task = {
         id: Date.now(),
         text: TEXT,
         isChecked: false,
       };
-      tasks.push(TASK);
-      INPUT_ADD.value = '';
+      tasks.push(task);
+      addInput.value = '';
       currentPage = 0;
     }
-    RENDER();
+    render();
   };
 
-  const SET_PAGE = (event) => {
+  const setPage = (event) => {
     currentPage = event.target.id;
-    RENDER();
+    render();
   };
 
-  const CHECK_KEY = (event) => {
-    if (event.key === ENTER_BUTTON) ADD_TASK();
+  const checkKey = (event) => {
+    if (event.key === ENTER_BUTTON) addTask();
   };
 
-  const CHECK_ALL_TASKS = (event) => {
+  const checkAllTasks = (event) => {
     tasks.forEach((item) => {
-      const TASK = item;
-      TASK.isChecked = event.target.checked;
+      item.isChecked = event.target.checked;
     });
-    RENDER();
+    render();
   };
 
-  const CHECK_TASK = (event) => {
-    const TASK = tasks.find((item) => item.id === Number(event.target.parentNode.id));
-    TASK.isChecked = !TASK.isChecked;
-    RENDER();
+  const allChecked = () => {
+    let checkValue = true;
+    tasks.forEach((item) => {
+      if (!item.isChecked) checkValue = false;
+    });
+    return checkValue;
   };
 
-  const RENAME_TASK = (event) => {
-    const CURRENT_EVENT = event;
-    if (CURRENT_EVENT.sourceCapabilities !== null) {
-      CURRENT_EVENT.target.previousElementSibling.textContent = event.target.value;
-      CURRENT_EVENT.target.previousElementSibling.classList.toggle('hidden');
-      CURRENT_EVENT.target.classList.toggle('hidden');
-      const TASK = tasks.find((item) => item.id === Number(event.target.parentElement.id));
-      if (!CURRENT_EVENT.target.value) {
-        TASK.text = VALIDATE_TASK(_.escape(event.target.value));
+  const checkTask = (event) => {
+    const task = tasks.find((item) => item.id === Number(event.target.parentNode.id));
+    task.isChecked = !task.isChecked;
+    checkAllButton.checked = allChecked();
+  };
+
+  const renameTask = (event) => {
+    const {
+      previousElementSibling,
+      classList,
+      value,
+      parentElement,
+    } = event.target;
+    if (event.sourceCapabilities) {
+      console.log('poop', event);
+      previousElementSibling.textContent = event.target.value;
+      previousElementSibling.classList.toggle('hidden');
+      classList.toggle('hidden');
+      const task = tasks.find((item) => item.id === Number(parentElement.id));
+      if (value) {
+        task.text = validateTask(_.escape(event.target.value));
       }
-      RENDER();
+      render();
     }
   };
 
-  const HANDLE_KEYS = (event) => {
+  const handleKeys = (event) => {
     if (event.key === ENTER_BUTTON) {
-      RENAME_TASK(event);
+      renameTask(event);
     } else if (event.key === ESCAPE_BUTTON) {
-      const CURRENT_EVENT = event;
-      CURRENT_EVENT.target.previousElementSibling.classList.toggle('hidden');
-      CURRENT_EVENT.target.classList.toggle('hidden');
-      CURRENT_EVENT.target.value = event.target.previousElementSibling.textContent;
+      render();
     }
   };
 
-  const DELETE_TASK = (event) => {
+  const deleteTask = (event) => {
     tasks = tasks.filter((item) => item.id !== Number(event.target.parentNode.id));
-    RENDER();
+    render();
   };
 
-  const DELETE_ALL_DONE = () => {
+  const deleteAllDone = () => {
     tasks = tasks.filter((item) => !item.isChecked);
-    CHECK_ALL_BTN.checked = false;
-    RENDER();
+    checkAllButton.checked = false;
+    render();
   };
 
-  const OPERATE_TASK = (event) => {
-    if (event.target.type === 'checkbox') { CHECK_TASK(event); }
-    if (event.target.type === 'button') { DELETE_TASK(event); }
-    if (event.target.localName === 'span' && event.detail === 2) {
-      event.target.classList.toggle('hidden');
-      event.target.nextElementSibling.classList.toggle('hidden');
-      event.target.nextElementSibling.focus();
+  const operateTask = (event) => {
+    const {
+      type,
+      localName,
+      classList,
+      nextElementSibling,
+    } = event.target;
+    if (type === 'checkbox') { checkTask(event); }
+    if (type === 'button') { deleteTask(event); }
+    if (localName === 'span' && event.detail === 2) {
+      classList.toggle('hidden');
+      nextElementSibling.classList.toggle('hidden');
+      nextElementSibling.focus();
     }
   };
 
-  const CHANGE_FILTER_STATUS = (event) => {
+  const changeFilterStatus = (event) => {
     filterStatus = event.target.id;
     currentPage = 1;
-    RENDER();
+    render();
   };
 
-  BUTTON_ADD.addEventListener('click', ADD_TASK);
-  INPUT_ADD.addEventListener('keydown', CHECK_KEY);
-  CHECK_ALL_BTN.addEventListener('click', CHECK_ALL_TASKS);
-  LIST.addEventListener('click', OPERATE_TASK);
-  LIST.addEventListener('keydown', HANDLE_KEYS);
-  LIST.addEventListener('blur', RENAME_TASK, true);
-  DELETE_ALL_COMPLETED.addEventListener('click', DELETE_ALL_DONE);
-  FILTER_TODOS_LIST.addEventListener('click', CHANGE_FILTER_STATUS);
-  PAGE_LIST.addEventListener('click', SET_PAGE);
-}());
+  addButton.addEventListener('click', addTask);
+  addInput.addEventListener('keydown', checkKey);
+  checkAllButton.addEventListener('click', checkAllTasks);
+  list.addEventListener('click', operateTask);
+  list.addEventListener('keydown', handleKeys);
+  list.addEventListener('blur', renameTask, true);
+  deleteAllCompleted.addEventListener('click', deleteAllDone);
+  filterTodosList.addEventListener('click', changeFilterStatus);
+  pageList.addEventListener('click', setPage);
+})();
