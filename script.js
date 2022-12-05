@@ -39,13 +39,13 @@
     return filteredTasks;
   };
 
-  const countPages = (data) => {
+  const showPageBtns = (data) => {
     const pageCount = Math.ceil(data.length / PAGE_SIZE);
-    let liPage = '';
+    let pageBtns = '';
     for (let i = 1; i <= pageCount; i += 1) {
-      liPage += `<button type="button" class="btn ${currentPage !== i ? 'btn-warning' : 'btn-light'}" id=${i}>${i}</button>`;
+      pageBtns += `<button type="button" class="btn ${currentPage !== i ? 'btn-warning' : 'btn-light'}" id=${i}>${i}</button>`;
     }
-    pageList.innerHTML = liPage;
+    pageList.innerHTML = pageBtns;
   };
 
   const showPageTasks = (data) => {
@@ -67,7 +67,7 @@
     let li = '';
     const filteredTasks = setFilter();
     const currentTasks = showPageTasks(filteredTasks);
-    countPages(filteredTasks);
+    showPageBtns(filteredTasks);
     currentTasks.forEach((item) => {
       const checked = item.isChecked ? 'checked' : '';
       li += `<li id=${item.id}>
@@ -112,7 +112,7 @@
   };
 
   const setPage = (event) => {
-    currentPage = event.target.id;
+    currentPage = Number(event.target.id);
     render();
   };
 
@@ -139,6 +139,7 @@
     const task = tasks.find((item) => item.id === Number(event.target.parentNode.id));
     task.isChecked = !task.isChecked;
     checkAllButton.checked = allChecked();
+    render();
   };
 
   const renameTask = (event) => {
