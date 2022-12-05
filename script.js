@@ -143,16 +143,13 @@
 
   const renameTask = (event) => {
     const {
-      previousElementSibling,
-      classList,
       value,
       parentElement,
     } = event.target;
-    if (event.sourceCapabilities) {
-      console.log('poop', event);
-      previousElementSibling.textContent = event.target.value;
-      previousElementSibling.classList.toggle('hidden');
-      classList.toggle('hidden');
+    if (event.target.id === 'inputEdit') {
+      event.target.previousElementSibling.textContent = event.target.value;
+      event.target.previousElementSibling.classList.toggle('hidden');
+      event.target.classList.toggle('hidden');
       const task = tasks.find((item) => item.id === Number(parentElement.id));
       if (value) {
         task.text = validateTask(_.escape(event.target.value));
