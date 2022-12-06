@@ -102,7 +102,7 @@
       const task = {
         id: Date.now(),
         text,
-        isChecked: false,
+        isChecked: checkAllButton.checked !== false,
       };
       tasks.push(task);
       addInput.value = '';
