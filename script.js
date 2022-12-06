@@ -11,7 +11,7 @@
   const completedTodos = document.getElementById('completedTodos');
   const filterTodosList = document.getElementById('filterTodos');
   const pageList = document.getElementById('pageList');
-  const PAGE_SIZE = 3;
+  const PAGE_SIZE = 5;
   const { _ } = window;
 
   let tasks = [];
@@ -97,11 +97,11 @@
   };
 
   const addTask = () => {
-    const TEXT = _.escape(validateTask(addInput.value.trim()));
-    if (TEXT) {
+    const text = _.escape(validateTask(addInput.value.trim()));
+    if (text) {
       const task = {
         id: Date.now(),
-        text: TEXT,
+        text,
         isChecked: false,
       };
       tasks.push(task);
